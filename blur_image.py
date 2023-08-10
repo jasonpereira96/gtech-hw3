@@ -110,6 +110,14 @@ def read_grid(file_path):
     """
 
     # REMOVE THIS COMMENT AND REPLACE IT WITH YOUR CODE ...
+    f = open(file_path)
+    lines = f.readlines()
+    grid = []
+
+    for line in lines:
+        grid.append(csv_line_to_list(line.strip()))
+
+    return grid
 
 
 def write_grid(file_name, pixel_grid):
@@ -137,6 +145,20 @@ def get_pixel_at(pixel_grid, i, j):
     """
 
     # REMOVE THIS COMMENT AND REPLACE IT WITH YOUR CODE ...
+    if (i < 0) or (j < 0):
+        return 0 
+
+    N = len(pixel_grid)
+    M = len(pixel_grid[0])
+
+    if i >= N:
+        return 0
+
+    if j >= M:
+        return 0
+
+    return pixel_grid[i][j]
+
 
 
 def test_get_pixel_at():
@@ -185,7 +207,7 @@ def test_get_pixel_at():
 # Run the tests. This method prints nothing if the tests
 # pass. This method prints an error message for the first
 # error it encounters.
-# test_get_pixel_at()
+test_get_pixel_at()
 
 
 def average_of_surrounding(pixel_grid, i, j):
@@ -195,6 +217,11 @@ def average_of_surrounding(pixel_grid, i, j):
     """
     pixel_sum = 0
     # REMOVE THIS COMMENT AND REPLACE IT WITH YOUR CODE ...
+
+    neighbours = [[0,0], [1,0], [1,1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
+
+    for neighbour in neighbours:
+        pixel_sum = pixel_sum + get_pixel_at(pixel_grid, i + neighbour[0], j + neighbour[1])    
 
     # pixel_sum should be an integer. We intend for this to be
     # truncating integer division.
@@ -223,7 +250,7 @@ def test_average_of_surrounding():
         print(e)
 
 
-# test_average_of_surrounding()
+test_average_of_surrounding()
 
 
 def blur(pixel_grid):
@@ -236,6 +263,18 @@ def blur(pixel_grid):
     blurred_grid = []
 
     # REMOVE THIS COMMENT AND REPLACE IT WITH YOUR CODE ...
+
+    row_index = 0
+    col_index = 0
+    for row in pixel_grid:
+        blurred_grid.append([])
+        for cell in row:
+            new_pixel = average_of_surrounding(pixel_grid, row_index, col_index)
+            blurred_grid[row_index].append(new_pixel)
+            col_index = col_index + 1
+        col_index = 0
+        row_index = row_index + 1
+
 
     # The returned grid should contain NEW lists and not any copies
     # of parts of pixel_grid. See Problem 4 on the spec for more on this.
@@ -307,10 +346,16 @@ out_grid_filename = input_filename + '_blurry_grid.txt'
 
 # REMOVE THIS COMMENT AND REPLACE IT WITH YOUR CODE ...
 
+output_grid = blur(input_grid)
+
 # Step E: Write the result to both output files
 
 # REMOVE THIS COMMENT AND REPLACE IT WITH YOUR CODE ...
 
+if extension == ".txt":
+    write_grid(out_grid_filename, output_grid)
+else:
+    write_image(out_image_filename, output_grid)
 
 print("Program done")
 
